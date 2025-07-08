@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Pedidos</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        a { color: #007bff; text-decoration: none; }
+        .btn { display: inline-block; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; border:none; cursor:pointer; }
+        .btn-add { background-color: #007bff; margin-bottom: 20px; }
+        .btn-add:hover { background-color: #0056b3; }
+        .solicitacoes { list-style-type: none; padding: 0; }
+        .solicitacoes li { background: #f8f9fa; margin-bottom: 15px; padding: 15px; border-radius: 4px; border-left: 5px solid #6c757d; }
+        .solicitacoes li.status-comprado { border-left-color: #28a745; }
+        .solicitacoes li.status-cancelado { border-left-color: #dc3545; }
+        .solicitacoes p { margin: 5px 0; font-size: 14px; }
+        .solicitacoes .datas { font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Histórico de Pedidos</h1>
+        <a href="/" class="btn btn-add">Voltar para Pendentes</a>
+        <hr>
+
+        <ul class="solicitacoes">
+            {% for solicitacao in solicitacoes %}
+                {% set status_class = 'status-' + solicitacao.status.lower().replace(' ', '-') %}
+                <li class="{{ status_class }}">
+                    <p><strong>Produto:</strong> {{ solicitacao.produto_nome }} ({{ solicitacao.quantidade }} un.)</p>
+                    <p><strong>Fornecedor:</strong> {{ solicitacao.fornecedor.nome }}</p>
+                    <p><strong>Status:</strong> {{ solicitacao.status }}</p>
+                    <p class="datas">
+                        Solicitado em: {{ solicitacao.data_solicitacao.strftime('%d/%m/%Y') }}
+                        {% if solicitacao.data_execucao %}
+                            | Finalizado em: {{ solicitacao.data_execucao.strftime('%d/%m/%Y') }}
+                        {% endif %}
+                    </p>
+                </li>
+            {% else %}
+                <li>Nenhum item no histórico.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

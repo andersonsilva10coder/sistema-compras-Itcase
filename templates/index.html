@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos de Compra</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        .header-links { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h3 { display: flex; justify-content: space-between; align-items: center; color: #555; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 30px; }
+        a { color: #007bff; text-decoration: none; }
+        .btn { display: inline-block; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; border:none; cursor:pointer; }
+        .btn-add { background-color: #007bff; }
+        .btn-history { background-color: #6c757d; }
+        .btn-download { background-color: #17a2b8; font-size: 12px; }
+
+        /* **** CLASSE NOVA AQUI **** */
+        .btn-update { background-color: #6c757d; font-size: 14px; } 
+        .btn-update:hover { background-color: #5a6268; }
+
+        .solicitacoes { list-style-type: none; padding: 0; }
+        .solicitacoes li { background: #f8f9fa; margin-bottom: 15px; padding: 15px; border-radius: 4px; border-left: 5px solid #007bff; }
+        .solicitacoes li.status-em-cotacao { border-left-color: #ffc107; }
+        .solicitacoes li.status-comprado { border-left-color: #28a745; }
+        .solicitacoes li.status-cancelado { border-left-color: #dc3545; }
+        .solicitacoes p { margin: 5px 0; }
+        .solicitacoes .datas { font-size: 12px; color: #666; margin-top: 10px;}
+        .status-form { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+        .status-form select { padding: 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Compras</h1>
+        <div class="header-links">
+            <a href="/adicionar" class="btn btn-add">Adicionar Novo Pedido</a>
+            <a href="/historico" class="btn btn-history">Ver Histórico</a>
+        </div>
+        <hr>
+        <h2>Pedidos de Compra Pendentes</h2>
+
+        {% for fornecedor, pedidos in pedidos_agrupados.items() %}
+            <h3>
+                <span>Fornecedor: {{ fornecedor }}</span>
+                <a href="{{ url_for('baixar_relatorio', fornecedor_nome=fornecedor) }}" class="btn btn-download">Baixar Relatório (.csv)</a>
+            </h3>
+            <ul class="solicitacoes">
+                {% for solicitacao in pedidos %}
+                    {% set status_class = 'status-' + solicitacao.status.lower().replace(' ', '-').replace('ç', 'c').replace('ã', 'a') %}
+                    <li class="{{ status_class }}">
+                        <p><strong>Produto:</strong> {{ solicitacao.produto_nome }} ({{ solicitacao.quantidade }} un.)</p>
+                        <p><strong>Segmento:</strong> {{ solicitacao.segmento.nome }}</p>
+                        <p class="datas">Solicitado em: {{ solicitacao.data_solicitacao.strftime('%d/%m/%Y') }}</p>
+
+                        <form class="status-form" method="post" action="{{ url_for('mudar_status', solicitacao_id=solicitacao.id) }}">
+                            <label for="status-{{ solicitacao.id }}"><strong>Status:</strong></label>
+                            <select name="status" id="status-{{ solicitacao.id }}">
+                                <option value="Aguardando Aprovação" {% if solicitacao.status == 'Aguardando Aprovação' %}selected{% endif %}>Aguardando Aprovação</option>
+                                <option value="Em Cotação" {% if solicitacao.status == 'Em Cotação' %}selected{% endif %}>Em Cotação</option>
+                                <option value="Comprado" {% if solicitacao.status == 'Comprado' %}selected{% endif %}>Comprado</option>
+                                <option value="Cancelado" {% if solicitacao.status == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                            </select>
+                            <button type="submit" class="btn btn-update">Atualizar</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="text-align: center;">Nenhum pedido de compra pendente encontrado.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

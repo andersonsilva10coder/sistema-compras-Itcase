@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Pedido de Compra</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1, h2 { color: #333; }
+        a { color: #007bff; text-decoration: none; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        button:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar Novo Pedido</h1>
+        <a href="/">Ver Todas as Solicitações</a>
+        <hr>
+
+        <form method="post">
+            <label for="fornecedor">Fornecedor:</label>
+            <input type="text" id="fornecedor" name="fornecedor" required>
+
+            <label for="segmento">Segmento:</label>
+            <select id="segmento" name="segmento_id" required>
+                {% for seg in segmentos %}
+                <option value="{{ seg.id }}">{{ seg.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="produto_nome">Nome do Produto:</label>
+            <input type="text" id="produto_nome" name="produto_nome" required>
+
+            <label for="marca">Marca:</label>
+            <input type="text" id="marca" name="marca">
+
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo">
+
+            <label for="quantidade">Quantidade:</label>
+            <input type="number" id="quantidade" name="quantidade" required>
+
+            <label for="observacao">Observação:</label>
+            <textarea id="observacao" name="observacao" rows="3"></textarea>
+
+            <button type="submit">Salvar Solicitação</button>
+        </form>
+    </div>
+</body>
+</html>
